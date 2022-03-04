@@ -10,4 +10,6 @@
                 <property name="userDao" ref="userDao"/>
         </bean>
 
+        <bean class="top.yuan.test.common.MyBeanFactoryPostProcessor"/>
+        <bean class="top.yuan.test.common.MyBeanPostProcessor"/>
 </beans>

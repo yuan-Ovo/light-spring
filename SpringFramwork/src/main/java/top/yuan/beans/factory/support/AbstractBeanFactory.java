@@ -1,15 +1,21 @@
 package top.yuan.beans.factory.support;
 
 import top.yuan.beans.BeansException;
-import top.yuan.beans.factory.BeanFactory;
 import top.yuan.beans.factory.config.BeanDefinition;
+import top.yuan.beans.factory.config.BeanPostProcessor;
+import top.yuan.beans.factory.config.ConfigurableBeanFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * \* Create by Yuan
  * \* @author: Yuan
  * \
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+
+    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     @Override
     public Object getBean(String name) throws BeansException {
@@ -34,6 +40,18 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
         BeanDefinition beanDefinition = getBeanDefinition(name);
         return (T) createBean(name, beanDefinition, args);
+    }
+
+
+
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
+
+    @Override
+    public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+        this.beanPostProcessors.remove(beanPostProcessor);
+        this.beanPostProcessors.add(beanPostProcessor);
     }
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;

@@ -18,8 +18,12 @@ public class UserService {
 
     private UserDao userDao;
 
+    private String location;
+
+    private String company;
+
     public void queryUserInfo() {
-        System.out.println("查询用户信息: " + userDao.queryUserName(uid) + " " + this.hashCode());
+        System.out.println("查询用户信息: " + userDao.queryUserName(uid) + " " + company + location + " " + this.hashCode());
     }
 
     public UserService() {}
@@ -49,6 +53,22 @@ public class UserService {
         this.userDao = userDao;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
     @Override
     public String toString() {
 //        final StringBuilder sb = new StringBuilder("");
@@ -56,6 +76,7 @@ public class UserService {
 //        return sb.toString();
         return userDao.queryUserName(uid);
     }
+
 }
 
 class test {
