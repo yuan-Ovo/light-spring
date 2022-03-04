@@ -3,6 +3,8 @@ package top.yuan.test;
 import cn.hutool.core.io.IoUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import top.yuan.beans.factory.support.DefaultListableBeanFactory;
+import top.yuan.beans.factory.xml.XmlBeanDefinitionReader;
 import top.yuan.core.io.DefaultResourceLoader;
 import top.yuan.core.io.Resource;
 
@@ -45,5 +47,16 @@ public class ApiTest {
         InputStream inputStream = resource.getInputStream();
         String content = IoUtil.readUtf8(inputStream);
         System.out.println("url: " + content);
+    }
+
+    @Test
+    public void test_xml() {
+        DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
+        reader.loadBeanDefinitions("classpath:spring.xml");
+
+        UserService userService = factory.getBean("userService", UserService.class);
+        userService.queryUserInfo();
     }
 }
