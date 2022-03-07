@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import top.yuan.beans.BeansException;
 import top.yuan.beans.PropertyValue;
 import top.yuan.beans.PropertyValues;
+import top.yuan.beans.factory.DisposableBean;
+import top.yuan.beans.factory.InitializingBean;
 import top.yuan.beans.factory.config.BeanDefinition;
 import top.yuan.beans.factory.config.BeanReference;
 import top.yuan.beans.factory.support.DefaultListableBeanFactory;
@@ -13,7 +15,7 @@ import top.yuan.beans.factory.support.DefaultListableBeanFactory;
  * \* @author: Yuan
  * \
  */
-public class UserService {
+public class UserService implements InitializingBean, DisposableBean {
     private int uid;
 
     private UserDao userDao;
@@ -24,6 +26,17 @@ public class UserService {
 
     public void queryUserInfo() {
         System.out.println("查询用户信息: " + userDao.queryUserName(uid) + " " + company + location + " " + this.hashCode());
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("执行 UserService.destroy()");
+
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("执行 UserService.afterPropertiesSet()");
     }
 
     public UserService() {}

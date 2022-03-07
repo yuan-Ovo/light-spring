@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
 
-        <bean id="userDao" class="top.yuan.test.UserDao"/>
+        <bean id="userDao" class="top.yuan.test.UserDao"
+              init-method="initDataMethod" destroy-method="destroyDataMethod"/>
 
         <bean id="userService" class="top.yuan.test.UserService">
                 <property name="uid" value="1"/>

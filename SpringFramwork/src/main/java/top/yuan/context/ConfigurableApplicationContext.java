@@ -13,4 +13,14 @@ public interface ConfigurableApplicationContext extends ApplicationContext{
      * @throws BeansException 通用Bean异常处理
      */
     void refresh() throws BeansException;
+
+    /**
+     * 注册shutdown时的钩子方法
+     */
+    void registerShutdownHook();
+
+    /**
+     * 关闭上下文应用
+     */
+    void close();
 }
