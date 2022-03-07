@@ -1,5 +1,6 @@
 package top.yuan.beans.factory.support;
 
+import top.yuan.Utils.ClassUtils;
 import top.yuan.beans.BeansException;
 import top.yuan.beans.factory.config.BeanDefinition;
 import top.yuan.beans.factory.config.BeanPostProcessor;
@@ -14,6 +15,8 @@ import java.util.List;
  * \
  */
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+
+    private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
     private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
@@ -52,6 +55,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         this.beanPostProcessors.remove(beanPostProcessor);
         this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    public ClassLoader getBeanClassLoader() {
+        return this.beanClassLoader;
     }
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;

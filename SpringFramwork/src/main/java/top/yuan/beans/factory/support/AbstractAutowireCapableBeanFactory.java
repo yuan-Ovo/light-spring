@@ -5,8 +5,7 @@ import top.yuan.Utils.BeanUtils;
 import top.yuan.beans.BeansException;
 import top.yuan.beans.PropertyValue;
 import top.yuan.beans.PropertyValues;
-import top.yuan.beans.factory.DisposableBean;
-import top.yuan.beans.factory.InitializingBean;
+import top.yuan.beans.factory.*;
 import top.yuan.beans.factory.config.AutowireCapableBeanFactory;
 import top.yuan.beans.factory.config.BeanDefinition;
 import top.yuan.beans.factory.config.BeanPostProcessor;
@@ -93,10 +92,24 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
-        //执行Before后处理
+        // 实现感知,调用各Aware接口中的Set方法
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());
+            }
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+        }
+
+        //1. 执行Before后处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
 
         try {
+            // 执行Bean对象的初始化init方法
             invokeInitMethod(beanName, wrappedBean, beanDefinition);
         } catch (Exception e) {
             throw new BeansException("执行' " + beanName + "' 的init方法时出现错误", e);

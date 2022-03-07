@@ -5,7 +5,7 @@ import top.yuan.beans.BeansException;
 /**
  * \* Create by Yuan
  * \* @author: Yuan
- * \
+ * \  用于修改实例化Bean对象的扩展点
  */
 public interface BeanPostProcessor {
     /**

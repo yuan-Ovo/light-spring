@@ -10,5 +10,4 @@
                 <property name="location" value="深圳"/>
                 <property name="userDao" ref="userDao"/>
         </bean>
-
 </beans>

@@ -4,18 +4,24 @@ import org.junit.jupiter.api.Test;
 import top.yuan.beans.BeansException;
 import top.yuan.beans.PropertyValue;
 import top.yuan.beans.PropertyValues;
-import top.yuan.beans.factory.DisposableBean;
-import top.yuan.beans.factory.InitializingBean;
+import top.yuan.beans.factory.*;
 import top.yuan.beans.factory.config.BeanDefinition;
 import top.yuan.beans.factory.config.BeanReference;
 import top.yuan.beans.factory.support.DefaultListableBeanFactory;
+import top.yuan.context.ApplicationContext;
+import top.yuan.context.ApplicationContextAware;
 
 /**
  * \* Create by Yuan
  * \* @author: Yuan
  * \
  */
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService implements InitializingBean, DisposableBean,
+        ApplicationContextAware, BeanFactoryAware, BeanNameAware, BeanClassLoaderAware {
+    private ApplicationContext applicationContext;
+
+    private BeanFactory beanFactory;
+
     private int uid;
 
     private UserDao userDao;
@@ -37,6 +43,26 @@ public class UserService implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("执行 UserService.afterPropertiesSet()");
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("Bean的 ClassLoader是："  + classLoader);
+    }
+
+    @Override
+    public void setBeanName(String beanName) {
+        System.out.println("Bean的 BeanName："  + beanName);
     }
 
     public UserService() {}
@@ -82,6 +108,14 @@ public class UserService implements InitializingBean, DisposableBean {
         this.company = company;
     }
 
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
     @Override
     public String toString() {
 //        final StringBuilder sb = new StringBuilder("");
@@ -89,7 +123,6 @@ public class UserService implements InitializingBean, DisposableBean {
 //        return sb.toString();
         return userDao.queryUserName(uid);
     }
-
 }
 
 class test {
