@@ -15,6 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
+    /**
+     * 初始化NULL_OBJECT对象作表示一个相当于null的单例对象
+     * 因为ConcurrentHashMap不支持null最为value，因此初始化一个对象来表示null(相当于一个标记)
+     */
+    protected static final Object NULL_OBJECT = new Object();
+
     private Map<String, Object> singletonObjects = new ConcurrentHashMap<>();
 
     private final Map<String, DisposableBean> disposableBeanMap = new ConcurrentHashMap<>();

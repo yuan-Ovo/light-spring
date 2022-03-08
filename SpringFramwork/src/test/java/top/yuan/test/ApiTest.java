@@ -106,5 +106,30 @@ public class ApiTest {
         System.out.println("BeanFactory:" + userService.getBeanFactory());
     }
 
+    @Test
+    public void test_factoryBean() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring_factoryBean.xml");
+        applicationContext.registerShutdownHook();
+
+        top.yuan.test.FactoryBeanTest.UserService u1 = applicationContext.getBean("userService", top.yuan.test.FactoryBeanTest.UserService.class);
+        top.yuan.test.FactoryBeanTest.UserService u2 = applicationContext.getBean("userService", top.yuan.test.FactoryBeanTest.UserService.class);
+
+        System.out.println(u1);
+        System.out.println(u2);
+
+        System.out.println(u1 + " 十六进制哈希：" + Integer.toHexString(u1.hashCode()));
+        System.out.println(u2 + " 十六进制哈希：" + Integer.toHexString(u2.hashCode()));
+//        System.out.println(ClassLayout.);
+
+    }
+    @Test
+    public void test_factory_bean() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring_factoryBean.xml");
+        applicationContext.registerShutdownHook();
+
+        top.yuan.test.FactoryBeanTest.UserService userService = applicationContext.getBean("userService", top.yuan.test.FactoryBeanTest.UserService.class);
+        userService.queryUserInfo();
+    }
+
 
 }
