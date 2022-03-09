@@ -10,6 +10,7 @@ import top.yuan.core.io.DefaultResourceLoader;
 import top.yuan.core.io.Resource;
 import top.yuan.test.common.MyBeanFactoryPostProcessor;
 import top.yuan.test.common.MyBeanPostProcessor;
+import top.yuan.test.event.CustomEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,6 +130,13 @@ public class ApiTest {
 
         top.yuan.test.FactoryBeanTest.UserService userService = applicationContext.getBean("userService", top.yuan.test.FactoryBeanTest.UserService.class);
         userService.queryUserInfo();
+    }
+
+    @Test
+    public void test_listener_publisher() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring_listen.xml");
+        applicationContext.publishEvent(new CustomEvent(applicationContext, 100212199212L, "\n广播的消息"));
+        applicationContext.registerShutdownHook();
     }
 
 
