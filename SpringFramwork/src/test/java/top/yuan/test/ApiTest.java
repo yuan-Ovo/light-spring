@@ -1,19 +1,33 @@
 package top.yuan.test;
 
 import cn.hutool.core.io.IoUtil;
+import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import top.yuan.aop.AdvisedSupport;
+import top.yuan.aop.MethodMatcher;
+import top.yuan.aop.TargetSource;
+import top.yuan.aop.aspectj.AspectJExpressionPointcut;
+import top.yuan.aop.framework.Cglib2AopProxy;
+import top.yuan.aop.framework.JdkDynamicAopProxy;
+import top.yuan.aop.framework.ReflectiveMethodInvocation;
 import top.yuan.beans.factory.support.DefaultListableBeanFactory;
 import top.yuan.beans.factory.xml.XmlBeanDefinitionReader;
 import top.yuan.context.support.ClassPathXmlApplicationContext;
 import top.yuan.core.io.DefaultResourceLoader;
 import top.yuan.core.io.Resource;
+import top.yuan.test.proxy.ITestInterceptor;
+import top.yuan.test.proxy.ITestInterface;
 import top.yuan.test.common.MyBeanFactoryPostProcessor;
 import top.yuan.test.common.MyBeanPostProcessor;
 import top.yuan.test.event.CustomEvent;
+import top.yuan.test.proxy.ITestInterfaceImpl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * \* Create by Yuan
@@ -139,5 +153,69 @@ public class ApiTest {
         applicationContext.registerShutdownHook();
     }
 
+    @Test
+    public void test_proxy() {
+        ITestInterface test = (ITestInterface) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                new Class[] {ITestInterface.class}, (proxy, method, args) -> "1⃣已被代理");
+        System.out.println(test.show());
+    }
+
+    @Test
+    public void test_aop() throws NoSuchMethodException {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut("execution(* top.yuan.test.proxy.ITestInterfaceImpl.*(..))");
+
+        Class<ITestInterfaceImpl> clazz = ITestInterfaceImpl.class;
+        Method method = clazz.getDeclaredMethod("show");
+
+        System.out.println(pointcut.matches(clazz));
+        System.out.println(pointcut.matches(method, clazz));
+    }
+
+    @Test
+    public void test_dynamic_proxy() {
+        ITestInterface iTestInterface = new ITestInterfaceImpl();
+
+        AdvisedSupport advisedSupport = new AdvisedSupport();
+        advisedSupport.setTargetSource(new TargetSource(iTestInterface));
+        advisedSupport.setMethodInterceptor(new ITestInterceptor());
+        advisedSupport.setMethodMatcher(new AspectJExpressionPointcut("execution(* top.yuan.test.proxy.ITestInterface.*(..))"));
+
+        ITestInterface proxy_jdk = (ITestInterface) new JdkDynamicAopProxy(advisedSupport).getProxy();
+        System.out.println("测试结果：" + proxy_jdk.show());
+
+        ITestInterface proxy_cglib = (ITestInterface) new Cglib2AopProxy(advisedSupport).getProxy();
+        System.out.println("测试结果：" + proxy_cglib.register("测试名"));
+    }
+
+    @Test
+    public void test_proxy_method() {
+         Object targetObject = new ITestInterfaceImpl();
+
+         ITestInterface proxy =(ITestInterface) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), targetObject.getClass().getInterfaces(), new InvocationHandler() {
+
+             MethodMatcher methodMatcher = new AspectJExpressionPointcut("execution(* top.yuan.test.proxy.ITestInterface.*(..))");
+             @Override
+             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                 if (methodMatcher.matches(method, targetObject.getClass())) {
+                     MethodInterceptor methodInterceptor = invocation -> {
+                         long start = System.currentTimeMillis();
+                         try {
+                             return invocation.proceed();
+                         } finally {
+                             System.out.println("监控 - Begin by AOP");
+                             System.out.println("方法名： " + invocation.getMethod().getName());
+                             System.out.println("方法耗时： " + (System.currentTimeMillis() - start) + "ms");
+                             System.out.println("监控 - End \r\n");
+                         }
+                     };
+                     return methodInterceptor.invoke(new ReflectiveMethodInvocation(targetObject, method, args));
+                 }
+                 return method.invoke(targetObject, args);
+             }
+         });
+
+        String show = proxy.show();
+        System.out.println("测试结果： " + show);
+    }
 
 }
