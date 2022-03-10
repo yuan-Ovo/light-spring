@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+       context:schemaLocation="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/context ">
+
+
+        <context:component-scan base-package="top.yuan.test.annotation"/>
+
+<!--        <bean id="userDao" class="top.yuan.test.UserDao"-->
+<!--              init-method="initDataMethod" destroy-method="destroyDataMethod"/>-->
+
+<!--        <bean id="userService" class="top.yuan.test.UserService">-->
+<!--                <property name="uid" value="1"/>-->
+<!--                <property name="company" value="腾讯"/>-->
+<!--                <property name="location" value="深圳"/>-->
+<!--                <property name="userDao" ref="userDao"/>-->
+<!--        </bean>-->
+</beans>
