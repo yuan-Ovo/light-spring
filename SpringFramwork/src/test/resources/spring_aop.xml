@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+        <bean id="userService" class="top.yuan.test.aop.UserService"/>
+        <bean class="top.yuan.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+        <bean id="beforeAdvice" class="top.yuan.test.aop.UserServiceBeforeAdvice"/>
+
+        <bean id="methodInterceptor" class="top.yuan.aop.framework.adapter.MethodBeforeAdviceInterceptor" >
+                <property name="advice" ref="beforeAdvice"/>
+        </bean>
+
+        <bean id="pointcutAdvisor" class="top.yuan.aop.aspectj.AspectJExpressionPointcutAdvisor" >
+                <property name="expression" value="execution(* top.yuan.test.aop.IUserService.*(..))"/>
+                <property name="advice" ref="methodInterceptor"/>
+        </bean>
+
+<!--        <bean id="userDao" class="top.yuan.test.UserDao"-->
+<!--              init-method="initDataMethod" destroy-method="destroyDataMethod"/>-->
+
+<!--        <bean id="userService" class="top.yuan.test.UserService">-->
+<!--                <property name="uid" value="1"/>-->
+<!--                <property name="company" value="腾讯"/>-->
+<!--                <property name="location" value="深圳"/>-->
+<!--                <property name="userDao" ref="userDao"/>-->
+<!--        </bean>-->
+</beans>

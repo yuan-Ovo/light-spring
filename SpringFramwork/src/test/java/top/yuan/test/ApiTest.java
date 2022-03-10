@@ -218,4 +218,12 @@ public class ApiTest {
         System.out.println("测试结果： " + show);
     }
 
+    @Test
+    public void test_auto_aop() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring_aop.xml");
+        ITestInterface iTest = applicationContext.getBean("iTest", ITestInterface.class);
+
+        System.out.println("result:" + iTest.show());
+    }
+
 }

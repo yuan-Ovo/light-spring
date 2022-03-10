@@ -9,6 +9,8 @@ import org.aopalliance.intercept.MethodInterceptor;
  *    这些类自身不是AOP代理，但是此类的子类通常是工厂，从中能够直接获取AOP代理实例
  */
 public class AdvisedSupport {
+
+    private boolean proxyTargetClass = false;
     /**
      *  被代理的目标对象
      */
@@ -21,6 +23,14 @@ public class AdvisedSupport {
      * 方法匹配器(检查方法是否符合通知条件)
      */
     private MethodMatcher methodMatcher;
+
+    public boolean isProxyTargetClass() {
+        return proxyTargetClass;
+    }
+
+    public void setProxyTargetClass(boolean proxyTargetClass) {
+        this.proxyTargetClass = proxyTargetClass;
+    }
 
     public TargetSource getTargetSource() {
         return targetSource;
