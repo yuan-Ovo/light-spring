@@ -1,6 +1,9 @@
-package top.yuan.test.annotation;
+package top.yuan.test.annotationValue;
 
+import top.yuan.beans.annotation.Autowired;
+import top.yuan.beans.annotation.Value;
 import top.yuan.stereotype.Component;
+
 import java.util.Random;
 
 /**
@@ -9,29 +12,37 @@ import java.util.Random;
  * \
  */
 @Component("userService")
-public class UserService implements IUserService {
+public class UserService implements IUserService{
 
+    @Value("${token}")
     private String token;
+
+    @Autowired
+    private UserDao userDao;
 
     @Override
     public String queryUserInfo() {
         try {
             Thread.sleep(new Random(1).nextInt(100));
         } catch (InterruptedException e) {
-            System.out.println("报错！");
             e.printStackTrace();
         }
-        return "查询业务";
+        return userDao.queryUserName("1") + "-----" + token;
     }
 
     @Override
-    public String register(String name) {
+    public String register(String userName) {
         try {
             Thread.sleep(new Random(1).nextInt(100));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return "注册用户: " + name + " 成功！";
+        return "注册"  + userName + "success";
+    }
+
+    @Override
+    public String toString() {
+        return "USS#token = {" + token + "}";
     }
 
     public String getToken() {
@@ -42,8 +53,11 @@ public class UserService implements IUserService {
         this.token = token;
     }
 
-    @Override
-    public String toString() {
-        return "UserService#token = { " + token + " }";
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 }

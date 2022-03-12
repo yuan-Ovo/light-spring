@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="LeetcodeEditor">
+    <option name="projectConfig">
+      <map>
+        <entry key="/var/folders/8g/wm0kpdj9391349gdp5js1xbh0000gn/T/leetcode/editor/cn/[589]N 叉树的前序遍历.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/8g/wm0kpdj9391349gdp5js1xbh0000gn/T/leetcode/editor/cn/doc/content/[589]N 叉树的前序遍历.md" />
+              <option name="frontendQuestionId" value="leetcode-cn.com589" />
+              <option name="host" value="leetcode-cn.com" />
+              <option name="path" value="/var/folders/8g/wm0kpdj9391349gdp5js1xbh0000gn/T/leetcode/editor/cn/[589]N 叉树的前序遍历.java" />
+              <option name="titleSlug" value="n-ary-tree-preorder-traversal" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+        <entry key="/var/folders/8g/wm0kpdj9391349gdp5js1xbh0000gn/T/leetcode/editor/cn/[剑指 Offer 33]二叉搜索树的后序遍历序列.java">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="/var/folders/8g/wm0kpdj9391349gdp5js1xbh0000gn/T/leetcode/editor/cn/doc/content/[剑指 Offer 33]二叉搜索树的后序遍历序列.md" />
+              <option name="frontendQuestionId" value="leetcode-cn.com剑指 Offer 33" />
+              <option name="host" value="leetcode-cn.com" />
+              <option name="path" value="/var/folders/8g/wm0kpdj9391349gdp5js1xbh0000gn/T/leetcode/editor/cn/[剑指 Offer 33]二叉搜索树的后序遍历序列.java" />
+              <option name="titleSlug" value="er-cha-sou-suo-shu-de-hou-xu-bian-li-xu-lie-lcof" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

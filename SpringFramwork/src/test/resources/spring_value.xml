@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+       context:schemaLocation="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/context ">
+
+        <bean class="top.yuan.beans.factory.PropertyPlaceholderConfigurer">
+                <property name="location" value="classpath:token.properties"/>
+        </bean>
+
+        <context:component-scan base-package="top.yuan.test.annotationValue"/>
+        <!--        -->
+        <!--        <bean class="top.yuan.beans.factory.PropertyPlaceholderConfigurer">-->
+        <!--                <property name="location" value="classpath:token.properties"/>-->
+        <!--        </bean>-->
+
+
+<!--        <bean id="userService" class="top.yuan.test.annotation.UserService">-->
+<!--                <property name="token" value="${token}"/>-->
+<!--        </bean>-->
+
+
+<!--        <bean id="userDao" class="top.yuan.test.UserDao"-->
+<!--              init-method="initDataMethod" destroy-method="destroyDataMethod"/>-->
+
+<!--        <bean id="userService" class="top.yuan.test.UserService">-->
+<!--                <property name="uid" value="1"/>-->
+<!--                <property name="company" value="腾讯"/>-->
+<!--                <property name="location" value="深圳"/>-->
+<!--                <property name="userDao" ref="userDao"/>-->
+<!--        </bean>-->
+</beans>

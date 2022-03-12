@@ -1,6 +1,7 @@
 package top.yuan.beans.factory.support;
 
 import top.yuan.Utils.ClassUtils;
+import top.yuan.Utils.StringValueResolver;
 import top.yuan.beans.BeansException;
 import top.yuan.beans.factory.FactoryBean;
 import top.yuan.beans.factory.config.BeanDefinition;
@@ -21,6 +22,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
     private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
+    /**
+     * 注解属性值的 字符串解析器
+     */
+    private List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
+
     @Override
     public Object getBean(String name) throws BeansException {
         return doGetBean(name, null);
@@ -34,6 +40,20 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     @Override
     public <T> T getBean(String beanClassName, Class<?> requiredType) throws BeansException {
         return (T) getBean(beanClassName);
+    }
+
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+        this.embeddedValueResolvers.add(valueResolver);
+    }
+
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for (StringValueResolver resolver : this.embeddedValueResolvers) {
+            result = resolver.resolveStringValue(result);
+        }
+        return value;
     }
 
     protected  <T>T doGetBean(String name, final Object[] args) throws BeansException{

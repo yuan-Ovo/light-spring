@@ -32,6 +32,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
             //创建Bean的实例
             bean = createBeanInstance(beanDefinition, beanName, args);
+            //在设置Bean属性之前，将需要通过注解注入的属性加入BeanDefinition的Properties属性的哈希表中，在applyPropertyValues方法中会一起添加到Bean实例当中
+            applyBeanPostProcessorsBeforeApplyingPropertyValues(beanName, bean, beanDefinition);
             //为创建的Bean实例填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
             //执行Bean都初始化方法和BeanPostProcessor都前后处理方法
@@ -46,6 +48,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             addSingleton(beanName, bean);
         }
         return bean;
+    }
+
+    protected void applyBeanPostProcessorsBeforeApplyingPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                PropertyValues pvs = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessPropertyValues(beanDefinition.getPropertyValues(), bean, beanName);
+                if (null != pvs) {
+                    for (PropertyValue pv : pvs.getPropertyValues()) {
+                        beanDefinition.getPropertyValues().addPropertyValue(pv);
+                    }
+                }
+            }
+        }
     }
 
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {

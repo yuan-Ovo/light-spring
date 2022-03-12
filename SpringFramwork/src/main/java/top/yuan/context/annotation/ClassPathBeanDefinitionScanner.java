@@ -1,6 +1,7 @@
 package top.yuan.context.annotation;
 
 import cn.hutool.core.util.StrUtil;
+import top.yuan.beans.annotation.AutowiredAnnotationBeanPostProcessor;
 import top.yuan.beans.factory.config.BeanDefinition;
 import top.yuan.beans.factory.support.BeanDefinitionRegistry;
 import top.yuan.stereotype.Component;
@@ -32,6 +33,9 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
                 registry.registerBeanDefinition(determineBeanName(beanDefinition), beanDefinition);
             }
         }
+        //注册处理注解的 BeanPostProcessor (@Autowired, @Value)
+        registry.registerBeanDefinition("top.yuan.context.annotation.internalAutowiredAnnotationProcessor",
+                new BeanDefinition(AutowiredAnnotationBeanPostProcessor.class));
     }
 
     private String resolveBeanScope(BeanDefinition beanDefinition) {

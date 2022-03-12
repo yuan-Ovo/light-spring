@@ -6,6 +6,7 @@ import top.yuan.aop.*;
 import top.yuan.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import top.yuan.aop.framework.ProxyFactory;
 import top.yuan.beans.BeansException;
+import top.yuan.beans.PropertyValues;
 import top.yuan.beans.factory.BeanFactory;
 import top.yuan.beans.factory.BeanFactoryAware;
 import top.yuan.beans.factory.config.InstantiationAwareBeanPostProcessor;
@@ -72,5 +73,10 @@ public class DefaultAdvisorAutoProxyCreator implements BeanFactoryAware, Instant
             return new ProxyFactory(advisedSupport).getProxy();
         }
         return null;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException {
+        return propertyValues;
     }
 }
