@@ -37,4 +37,14 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor{
      * @throws BeansException 通用Bean异常处理
      */
     boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException;
+
+    /**
+     * 得到二级缓存中的Bean引用
+     * @param bean
+     * @param beanName
+     * @return
+     */
+    default Object getEarlyBeanReference(Object bean, String beanName) {
+        return bean;
+    }
 }

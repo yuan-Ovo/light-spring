@@ -18,20 +18,29 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
 
-    private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
+    private InstantiationStrategy instantiationStrategy = new SimpleInstantiationStrategy();
 
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) {
+        //判断是否返回代理Bean对象
+        Object bean = resolveBeforeInstantiation(beanName, beanDefinition);
+        if (null != bean) {
+            return bean;
+        }
+        return doCreateBean(beanName, beanDefinition, args);
+    }
+
+    protected Object doCreateBean(String beanName, BeanDefinition beanDefinition, Object[] args) {
         Object bean = null;
         try {
-
-            //判断是否返回代理Bean对象
-            bean = resolveBeforeInstantiation(beanName, beanDefinition);
-            if (null != bean) {
-                return bean;
-            }
             //创建Bean的实例
             bean = createBeanInstance(beanDefinition, beanName, args);
+
+            if (beanDefinition.isSingleton()) {
+                Object finalBean = bean;
+                addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, beanDefinition, finalBean));
+            }
+
             //判断是否需要创建代理对象，如果需要则不在此处进行属性注入而是在DefaultAdvisorAutoProxyCreator中创建代理对象并进行AOP操作
             boolean continueWithPropertyPopulation = applyBeanPostProcessorAfterInstantiation(beanName, beanName);
             if (!continueWithPropertyPopulation) {
@@ -44,20 +53,34 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             //执行Bean都初始化方法和BeanPostProcessor都前后处理方法
             bean = initializeBean(beanName, bean, beanDefinition);
         } catch (Exception e) {
-            throw new BeansException("Instantiation of bean failed", e);
+            throw new BeansException("bean：" + beanName + "实例化失败", e);
         }
         //注册实现了DisposableBean接口的Bean对象
         registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
         //判断是否为单例模式，如果是单例模式才将创建的bean实例存入缓存当中，否则每次都创建新的实例
         Object exposedObject = bean;
         if (beanDefinition.isSingleton()) {
+            // 获取实例对象
             exposedObject = getSingleton(beanName);
             registerSingleton(beanName, exposedObject);
         }
 //        if (beanDefinition.isSingleton()) {
 //            addSingleton(beanName, bean);
 //        }
-        return bean;
+        return exposedObject;
+    }
+
+    protected Object getEarlyBeanReference(String beanName, BeanDefinition beanDefinition, Object bean) {
+        Object exposedObject = bean;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                exposedObject = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).getEarlyBeanReference(exposedObject, beanName);
+                if (null == exposedObject) {
+                    return null;//exposedObject
+                }
+            }
+        }
+        return exposedObject;
     }
 
     /**
@@ -83,7 +106,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected void applyBeanPostProcessorsBeforeApplyingPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
         for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
             if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
-                PropertyValues pvs = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessPropertyValues(beanDefinition.getPropertyValues(), bean, beanName);
+                PropertyValues pvs = ((InstantiationAwareBeanPostProcessor) beanPostProcessor)
+                        .postProcessPropertyValues(beanDefinition.getPropertyValues(), bean, beanName);
                 if (null != pvs) {
                     for (PropertyValue pv : pvs.getPropertyValues()) {
                         beanDefinition.getPropertyValues().addPropertyValue(pv);

@@ -50,7 +50,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
                 if (singletonFactory != null) {
                     singletonObject = singletonFactory.getObject();
                     //将三级缓存中的代理工厂中的代理对象取出，放入二级缓存当中,并把三级缓存中该实例的工厂移除
-                    earlySingletonObjects.put(beanName, singletonFactory);
+                    earlySingletonObjects.put(beanName, singletonObject);
                     singletonFactories.remove(beanName);
                 }
             }
