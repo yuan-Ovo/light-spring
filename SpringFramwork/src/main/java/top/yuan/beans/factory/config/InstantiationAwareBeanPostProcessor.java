@@ -28,4 +28,13 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor{
      * @throws BeansException 通用Bean异常处理
      */
     PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException;
+
+    /**\
+     * 在工厂方法实例化Bean之后，填充属性之前执行（自动装配、属性注入），为bean实例执行后处理
+     * @param bean 需要进行后处理的bean对象
+     * @param beanName bean名称
+     * @return
+     * @throws BeansException 通用Bean异常处理
+     */
+    boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException;
 }

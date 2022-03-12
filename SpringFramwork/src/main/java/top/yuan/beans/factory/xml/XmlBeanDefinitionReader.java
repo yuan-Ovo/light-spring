@@ -74,7 +74,6 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     protected void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException, DocumentException {
         // TODO: 2022/1/26 自己实现XML的读取方法
         SAXReader reader = new SAXReader();
-        InputStream in;
         Document document = reader.read(inputStream);
         Element root = document.getRootElement();
 //        Document doc = XmlUtil.readXML(inputStream);
@@ -115,7 +114,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             beanDefinition.setInitMethodName(initMethod);
             beanDefinition.setDestroyMethodName(destroyMethod);
             //设置单例模式/多例模式
-            if (StrUtil.isNotEmpty(beanName)) {
+            if (StrUtil.isNotEmpty(beanScope)) {
                 beanDefinition.setScope(beanScope);
             }
 

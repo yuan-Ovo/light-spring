@@ -1,7 +1,7 @@
 package top.yuan.beans.factory.support;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import top.yuan.Utils.BeanUtils;
 import top.yuan.beans.BeansException;
 import top.yuan.beans.PropertyValue;
 import top.yuan.beans.PropertyValues;
@@ -32,6 +32,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
             //创建Bean的实例
             bean = createBeanInstance(beanDefinition, beanName, args);
+            //判断是否需要创建代理对象，如果需要则不在此处进行属性注入而是在DefaultAdvisorAutoProxyCreator中创建代理对象并进行AOP操作
+            boolean continueWithPropertyPopulation = applyBeanPostProcessorAfterInstantiation(beanName, beanName);
+            if (!continueWithPropertyPopulation) {
+                return bean;
+            }
             //在设置Bean属性之前，将需要通过注解注入的属性加入BeanDefinition的Properties属性的哈希表中，在applyPropertyValues方法中会一起添加到Bean实例当中
             applyBeanPostProcessorsBeforeApplyingPropertyValues(beanName, bean, beanDefinition);
             //为创建的Bean实例填充属性
@@ -48,6 +53,26 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             addSingleton(beanName, bean);
         }
         return bean;
+    }
+
+    /**
+     * 实例化后返回false到对象，后续将不执行 bean对象到属性注入操作
+     * @param beanName bean名称
+     * @param bean bean实例
+     * @return 是否进行后续属性注入操作
+     */
+    private boolean applyBeanPostProcessorAfterInstantiation(String beanName, Object bean) {
+        boolean continueWithPropertyPopulation = true;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                InstantiationAwareBeanPostProcessor instantiationAwareBeanPostProcessor = (InstantiationAwareBeanPostProcessor) beanPostProcessor;
+                if (!instantiationAwareBeanPostProcessor.postProcessAfterInstantiation(bean, beanName)) {
+                    continueWithPropertyPopulation = false;
+                    break;
+                }
+            }
+        }
+        return continueWithPropertyPopulation;
     }
 
     protected void applyBeanPostProcessorsBeforeApplyingPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
@@ -99,7 +124,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     value = getBean(beanReference.getName());
                 }
 
-                BeanUtils.setFieldValue(bean, name, value);
+                BeanUtil.setFieldValue(bean, name, value);
             }
         } catch (Exception e) {
             throw new BeansException("设置Bean类型: " + beanName + " 属性时值出错");
@@ -115,6 +140,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // invokeAwareMethods
         // 实现感知,调用各Aware接口中的Set方法
         if (bean instanceof Aware) {
             if (bean instanceof BeanFactoryAware) {
@@ -177,6 +203,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
         Object result = existingBean;
         for (BeanPostProcessor postProcessor : getBeanPostProcessors()) {
+            //在DefaultAdvisorAutoProxyCreator的postProcessAfterInitialization完成代理对象的创建
             Object current = postProcessor.postProcessAfterInitialization(result, beanName);
             if (null == current) {
                 return result;

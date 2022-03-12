@@ -1,5 +1,7 @@
 package top.yuan.aop;
 
+import top.yuan.Utils.ClassUtils;
+
 /**
  * \* Create by Yuan
  * \* @author: Yuan
@@ -18,7 +20,9 @@ public class TargetSource {
      * @return {@link TargetSource}的目标类型
      */
     public Class<?>[] getTargetClass() {
-        return this.target.getClass().getInterfaces();
+        Class<?> clazz = this.target.getClass();
+        clazz = ClassUtils.isCglibProxyClass(clazz) ? clazz.getSuperclass() : clazz;
+        return clazz.getInterfaces();
     }
 
     /**
